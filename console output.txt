@@ -1,0 +1,177 @@
+Started by user Darin D
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/k8s
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout Code Only)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/k8s/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/suffixscope/maven-web-app.git # timeout=10
+Fetching upstream changes from https://github.com/suffixscope/maven-web-app.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/suffixscope/maven-web-app.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision 1cfbd5a53066a9003f5d25faf825dde2a46c1618 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 1cfbd5a53066a9003f5d25faf825dde2a46c1618 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D master # timeout=10
+ > git checkout -b master 1cfbd5a53066a9003f5d25faf825dde2a46c1618 # timeout=10
+Commit message: "Update scripted-jenkinsfile"
+ > git rev-list --no-walk 1cfbd5a53066a9003f5d25faf825dde2a46c1618 # timeout=10
+[Pipeline] sh
++ rm -f k8s-deploy.yml
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build with Maven)
+[Pipeline] sh
++ mvn clean package
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------< [0;36morg.scopeindia:01-maven-web-app[0;1m >-------------------[m
+[[1;34mINFO[m] [1mBuilding 01-maven-web-app 3.0-RELEASE[m
+[[1;34mINFO[m] [1m--------------------------------[ war ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(default-clean)[m @ [36m01-maven-web-app[0;1m ---[m
+[[1;34mINFO[m] Deleting /var/lib/jenkins/workspace/k8s/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.6:resources[m [1m(default-resources)[m @ [36m01-maven-web-app[0;1m ---[m
+[[1;33mWARNING[m] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[[1;34mINFO[m] skip non existing resourceDirectory /var/lib/jenkins/workspace/k8s/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.1:compile[m [1m(default-compile)[m @ [36m01-maven-web-app[0;1m ---[m
+[[1;34mINFO[m] No sources to compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.6:testResources[m [1m(default-testResources)[m @ [36m01-maven-web-app[0;1m ---[m
+[[1;33mWARNING[m] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[[1;34mINFO[m] skip non existing resourceDirectory /var/lib/jenkins/workspace/k8s/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.1:testCompile[m [1m(default-testCompile)[m @ [36m01-maven-web-app[0;1m ---[m
+[[1;34mINFO[m] No sources to compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-surefire-plugin:2.12.4:test[m [1m(default-test)[m @ [36m01-maven-web-app[0;1m ---[m
+[[1;34mINFO[m] No tests to run.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-war-plugin:3.3.1:war[m [1m(default-war)[m @ [36m01-maven-web-app[0;1m ---[m
+[[1;34mINFO[m] Packaging webapp
+[[1;34mINFO[m] Assembling webapp [01-maven-web-app] in [/var/lib/jenkins/workspace/k8s/target/maven-web-app]
+[[1;34mINFO[m] Processing war project
+[[1;34mINFO[m] Copying webapp resources [/var/lib/jenkins/workspace/k8s/src/main/webapp]
+[[1;34mINFO[m] Building war: /var/lib/jenkins/workspace/k8s/target/maven-web-app.war
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  1.663 s
+[[1;34mINFO[m] Finished at: 2025-03-02T05:34:39Z
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Image (Using Local Dockerfile))
+[Pipeline] sh
++ docker build -t darin04/mavenwebapp:latest -f /var/lib/jenkins/workspace/k8s/Docker/Dockerfile .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 192B done
+#1 WARN: MaintainerDeprecated: Maintainer instruction is deprecated in favor of using label (line 2)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/tomcat:latest
+#2 DONE 1.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 110.94kB done
+#4 DONE 0.0s
+
+#5 [1/2] FROM docker.io/library/tomcat:latest@sha256:0530899318f06ebb42f4452717d68bb4d87cc9eb971e2e8a4404816f8f6067d9
+#5 CACHED
+
+#6 [2/2] COPY ../target/maven-web-app.war /usr/local/tomcat/webapps/maven-web-app.war
+#6 DONE 0.0s
+
+#7 exporting to image
+#7 exporting layers 0.0s done
+#7 writing image sha256:a70227574ee75046bb04ddae8f3c6b519074f469aff1e50894a73a43f3341538 done
+#7 naming to docker.io/darin04/mavenwebapp:latest done
+#7 DONE 0.1s
+
+ [33m1 warning found (use docker --debug to expand):
+[0m - MaintainerDeprecated: Maintainer instruction is deprecated in favor of using label (line 2)
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push Docker Image)
+[Pipeline] withDockerRegistry
+$ docker login -u darin04 -p ******** https://index.docker.io/v1/
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+
+WARNING! Your credentials are stored unencrypted in '/var/lib/jenkins/workspace/k8s@tmp/da0e1340-4257-4ed3-9e75-656873b9436e/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+[Pipeline] {
+[Pipeline] sh
++ docker push darin04/mavenwebapp:latest
+The push refers to repository [docker.io/darin04/mavenwebapp]
+611adb3d7a97: Preparing
+5f70bf18a086: Preparing
+66d866024c1a: Preparing
+5f70bf18a086: Preparing
+0facae65633f: Preparing
+4e5b554b7345: Preparing
+39cf0ac89a5a: Preparing
+f844dcf94898: Preparing
+3359bc3d7a6a: Preparing
+4b7c01ed0534: Preparing
+39cf0ac89a5a: Waiting
+f844dcf94898: Waiting
+3359bc3d7a6a: Waiting
+4b7c01ed0534: Waiting
+0facae65633f: Layer already exists
+5f70bf18a086: Layer already exists
+66d866024c1a: Layer already exists
+4e5b554b7345: Layer already exists
+3359bc3d7a6a: Layer already exists
+4b7c01ed0534: Layer already exists
+f844dcf94898: Layer already exists
+39cf0ac89a5a: Layer already exists
+611adb3d7a97: Pushed
+latest: digest: sha256:40664f8201b07ae89dec6bd2b51c17f7b74c9f0add213e789e8d00a0c341a6cf size: 2411
+[Pipeline] }
+[Pipeline] // withDockerRegistry
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Kubernetes (Using Local Deployment YAML))
+[Pipeline] sh
++ kubectl apply -f /var/lib/jenkins/workspace/k8s/deployment.yaml --kubeconfig=/var/lib/jenkins/.kube/config
+deployment.apps/mavenwebappdeployment unchanged
+service/mavenwebappsvc unchanged
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+Deployment Successful!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
